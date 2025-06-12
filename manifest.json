@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "UmiSummarizer|Query",
-  "version": "1.2",
-  "description": "Solves Questions and Summarizes Content with AI",
+  "name": "Umi.ai Query & Summarizer",
+  "version": "2.1",
+  "description": "Supercharge your browser with AI. Summarize, explain, or humanize any text, and analyze pages or documents.",
   "permissions": [
     "activeTab",
     "tabs",
     "storage",
-    "scripting"
+    "scripting",
+    "contextMenus"
   ],
   "background": {
     "service_worker": "background.js"
@@ -25,19 +26,10 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "run_at": "document_idle"
-    }
-  ],
   "web_accessible_resources": [
     {
       "resources": [
-        "query.js",
-        "pdf.min.js",
-        "pdf.worker.min.js"
+        "A_logo_for_Umi_Query_Summarizer.png"
       ],
       "matches": ["<all_urls>"]
     }
