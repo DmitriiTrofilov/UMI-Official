@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Umi Assistant</title>
+  <style>
+    body {
+      font-family: 'Trebuchet MS', sans-serif;
+      background-color: #f3f4f6;
+      margin: 0;
+      padding: 0;
+      width: 360px;
+      box-sizing: border-box;
+      color: #4b5563;
+    }
+    nav {
+      background-color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #navlogoumi { font-size: 18px; font-weight: bold; color: #7572ff; }
+    .container { padding: 20px; }
+    input[type="text"] {
+      width: calc(100% - 24px);
+      padding: 12px;
+      font-size: 14px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      outline: none;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    button {
+      background-color: #7572ff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 10px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover { background-color: #4f46e5; }
+    #analyze-page-button { background-color: #6366f1; }
+    #analyze-page-button:hover { background-color: #4338ca; }
+    #drop-zone {
+      border: 2px dashed #7572ff;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      font-size: 13px;
+      background-color: #eef2ff;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    #status-box {
+      background-color: #ede9fe;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 13px;
+      min-height: 40px;
+      text-align: center;
+      margin-top: 10px;
+    }
+    #popup-response-box {
+        display: none;
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 15px;
+        font-size: 14px;
+        margin-top: 15px;
+        white-space: pre-wrap;
+        max-height: 200px;
+        overflow-y: auto;
+        word-wrap: break-word;
+    }
+    .credit-link {
+      margin-top: 15px;
+      padding: 0 20px 20px 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .credit-link a { color: #4f46e5; text-decoration: none; font-weight: bold; }
+    #logo{ width: 220px; margin: 0 auto 10px; display: block; }
+    
+    /* Custom Scrollbar Styling */
+    #popup-response-box::-webkit-scrollbar {
+        width: 8px;
+    }
+    #popup-response-box::-webkit-scrollbar-track {
+        background: #f3f4f6;
+        border-radius: 10px;
+    }
+    #popup-response-box::-webkit-scrollbar-thumb {
+        background-color: #c7d2fe;
+        border-radius: 10px;
+        border: 2px solid #f3f4f6;
+    }
+    #popup-response-box::-webkit-scrollbar-thumb:hover {
+        background-color: #a5b4fc;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div id="navlogoumi">Umi<span style="color: #4f46e5;">.ai</span></div>
+  </nav>
+  <img id="logo" src="A_logo_for_Umi_Query_Summarizer.png" alt="Umi.Query|Summarizer Logo">
+
+  <div class="container">
+    <input type="text" id="user-input" placeholder="Ask a question...">
+    <div id="drop-zone">Drop file here or click to upload<br><small>(.txt, .pdf, .docx, .pptx, images)</small></div>
+    <input type="file" id="file-input" accept=".txt,.pdf,.docx,.pptx,image/*" style="display:none;">
+
+    <button id="ask-button">Ask (Show in Popup)</button>
+    <button id="analyze-page-button">Ask & Display on Page</button>
+    
+    <div id="popup-response-box"></div>
+    <div id="status-box">Awaiting your command.</div>
+  </div>
+
+  <div class="credit-link">
+    Original Concept by <a href="https://www.linkedin.com/company/mindwave-innovations/posts/?feedView=all" target="_blank">Dominik Saliba</a><br>
+    Enhanced by <a href="https://dmitrof.tech" target="_blank">Dmitrii Trofilov (DmitrofNET)</a>
+  </div>
+  
+  <script src="pdf.min.js"></script>
+  <script src="query.js"></script>
+</body>
+</html>
