@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Umi.ai Query & Summarizer",
-  "version": "2.1",
-  "description": "Supercharge your browser with AI. Summarize, explain, or humanize any text, and analyze pages or documents.",
+  "version": "2.2",
+  "description": "Supercharge your browser with AI. Summarize, explain, or humanize any text, and analyze pages or documents with a themeable interface.",
   "permissions": [
     "activeTab",
     "tabs",

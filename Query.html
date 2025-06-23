@@ -4,21 +4,38 @@
   <meta charset="UTF-8" />
   <title>Umi.ai Assistant</title>
   <style>
-    :root {
-      --bg-dark: #111827;
-      --bg-light: #1f2937;
-      --primary: #818cf8;
-      --primary-dark: #6366f1;
-      --text-main: #e5e7eb;
-      --text-light: #9ca3af;
-      --border-color: #374151;
+    /* --- THEME & COLOR SYSTEM --- */
+    body {
+      /* Light Mode (Default) */
+      --bg-main: #f9fafb;
+      --bg-secondary: #ffffff;
+      --text-main: #111827;
+      --text-secondary: #4b5563;
+      --border-color: #d1d5db;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --button-text: white;
     }
+    body.dark-mode {
+      /* Dark Mode Overrides */
+      --bg-main: #111827;
+      --bg-secondary: #1f2937;
+      --text-main: #e5e7eb;
+      --text-secondary: #9ca3af;
+      --border-color: #374151;
+      --primary: #818cf8;
+      --primary-hover: #6366f1;
+      --button-text: white;
+    }
+    
+    /* --- GENERAL STYLES --- */
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-dark);
+      background-color: var(--bg-main);
+      color: var(--text-main);
       margin: 0;
       width: 380px;
-      color: var(--text-main);
+      transition: background-color 0.2s, color 0.2s;
     }
     .main-container {
       padding: 16px;
@@ -29,11 +46,12 @@
     .header {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 12px;
       padding-bottom: 12px;
       border-bottom: 1px solid var(--border-color);
     }
-    #logo { width: 40px; height: 40px; }
+    #logo { width: 40px; height: 40px; border-radius: 8px; }
     .header-text h1 {
       font-size: 20px;
       font-weight: 600;
@@ -43,10 +61,10 @@
     .header-text p {
       font-size: 13px;
       margin: 0;
-      color: var(--text-light);
+      color: var(--text-secondary);
     }
     textarea {
-      background-color: var(--bg-light);
+      background-color: var(--bg-secondary);
       border: 1px solid var(--border-color);
       border-radius: 8px;
       width: calc(100% - 24px);
@@ -65,39 +83,31 @@
       padding: 16px;
       text-align: center;
       font-size: 13px;
-      background-color: var(--bg-light);
+      background-color: var(--bg-secondary);
+      color: var(--text-secondary);
       cursor: pointer;
       transition: border-color 0.2s, background-color 0.2s;
     }
     #drop-zone:hover { border-color: var(--primary); }
-    #drop-zone.active { background-color: var(--primary-dark); color: white; border-color: var(--primary); }
+    #drop-zone.active { background-color: var(--primary-hover); color: white; border-color: var(--primary); }
     .button-group { display: flex; gap: 10px; }
     button {
       background-color: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 12px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      width: 100%;
-      transition: background-color 0.2s, transform 0.1s;
+      color: var(--button-text);
+      border: none; border-radius: 8px; padding: 12px;
+      font-size: 14px; font-weight: 500; cursor: pointer;
+      width: 100%; transition: background-color 0.2s, transform 0.1s;
     }
-    button:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+    button:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
     button:active { transform: translateY(0); }
     #status-box {
-      background-color: var(--bg-light);
-      border-radius: 8px;
-      padding: 12px;
-      font-size: 13px;
-      min-height: 20px;
-      text-align: center;
-      color: var(--text-light);
+      background-color: var(--bg-secondary);
+      border-radius: 8px; padding: 12px;
+      font-size: 13px; min-height: 20px;
+      text-align: center; color: var(--text-secondary);
     }
     .loading-dots span {
-        display: inline-block;
-        width: 8px; height: 8px; border-radius: 50%;
+        display: inline-block; width: 8px; height: 8px; border-radius: 50%;
         background-color: var(--primary);
         animation: umi-loading-pulse 1.4s infinite ease-in-out both;
     }
@@ -105,29 +115,48 @@
     .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
     @keyframes umi-loading-pulse { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
     #popup-response-box {
-        display: none;
-        background-color: var(--bg-light);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 15px;
-        font-size: 14px;
-        white-space: pre-wrap;
-        max-height: 250px;
-        overflow-y: auto;
-        word-wrap: break-word;
+        display: none; background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color); border-radius: 8px;
+        padding: 15px; font-size: 14px;
+        white-space: pre-wrap; max-height: 250px;
+        overflow-y: auto; word-wrap: break-word; color: var(--text-main);
     }
     #popup-response-box::-webkit-scrollbar { width: 6px; }
     #popup-response-box::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; }
+
+    /* --- THEME TOGGLE SWITCH --- */
+    .theme-switch-wrapper { display: flex; align-items: center; }
+    .theme-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+    .theme-switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+        position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #ccc; transition: .4s; border-radius: 28px;
+    }
+    .slider:before {
+        position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px;
+        background-color: white; transition: .4s; border-radius: 50%;
+    }
+    input:checked + .slider { background-color: var(--primary); }
+    input:focus + .slider { box-shadow: 0 0 1px var(--primary); }
+    input:checked + .slider:before { transform: translateX(22px); }
   </style>
 </head>
 <body>
 
   <div class="main-container">
     <header class="header">
-      <img id="logo" src="A_logo_for_Umi_Query_Summarizer.png" alt="Umi Logo">
-      <div class="header-text">
-        <h1>Umi.ai Assistant</h1>
-        <p>Your intelligent page companion.</p>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <img id="logo" src="A_logo_for_Umi_Query_Summarizer.png" alt="Umi Logo">
+        <div class="header-text">
+          <h1>Umi.ai</h1>
+          <p>Your AI Companion</p>
+        </div>
+      </div>
+      <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="theme-toggle" title="Toggle Dark/Light Mode">
+          <input type="checkbox" id="theme-toggle" />
+          <span class="slider"></span>
+        </label>
       </div>
     </header>
 

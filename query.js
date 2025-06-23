@@ -1,6 +1,6 @@
 // --- CONFIGURATION ---
 const API_KEY = "AIzaSyA7pIYg7E0FWkV5CEfovfIWQPtBbhGkhTI";
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
 
 // --- DOM ELEMENTS ---
 const userInput = document.getElementById('user-input');
@@ -10,10 +10,30 @@ const statusBox = document.getElementById('status-box');
 const dropZone = document.getElementById('drop-zone');
 const fileInput = document.getElementById('file-input');
 const popupResponseBox = document.getElementById('popup-response-box');
+const themeToggle = document.getElementById('theme-toggle');
 
 // --- GLOBAL STATE ---
 let uploadedFile = null;
 let typingInterval = null;
+
+// --- THEME MANAGEMENT ---
+function applyTheme(theme) {
+    document.body.classList.toggle('dark-mode', theme === 'dark');
+    themeToggle.checked = theme === 'dark';
+}
+
+themeToggle.addEventListener('change', (e) => {
+    const newTheme = e.target.checked ? 'dark' : 'light';
+    chrome.storage.local.set({ theme: newTheme });
+    applyTheme(newTheme);
+});
+
+// Load and apply saved theme on startup
+document.addEventListener('DOMContentLoaded', () => {
+    chrome.storage.local.get('theme', (data) => {
+        applyTheme(data.theme || 'light'); // Default to light mode
+    });
+});
 
 // --- API & RESPONSE HANDLING ---
 
@@ -95,7 +115,6 @@ analyzePageButton.addEventListener('click', async () => {
         if (uploadedFile) {
             analysisObject = uploadedFile;
         } else {
-            // Take screenshot via background script to avoid permission issues
             const response = await chrome.runtime.sendMessage({ action: 'captureScreenshot' });
             if (response && response.dataUrl) {
                 analysisObject = { mimeType: 'image/png', base64: response.dataUrl.split(',')[1] };
@@ -107,7 +126,6 @@ analyzePageButton.addEventListener('click', async () => {
 
         const prompt = buildPrompt(question, true, isScreenshot);
         
-        // **NEW ROBUST METHOD:** Ask background script to handle everything
         const result = await chrome.runtime.sendMessage({
             action: 'processQueryOnPage',
             prompt: prompt,
@@ -118,7 +136,6 @@ analyzePageButton.addEventListener('click', async () => {
         if (result.success) {
             setStatus('Response displayed on page!');
         } else {
-            // **INTELLIGENT FALLBACK**
             setStatus(`On-page display failed: ${result.message}. Showing here.`, true);
             const fallbackResult = await callGeminiForPopup(prompt, analysisObject);
             typeAnimation(popupResponseBox, "FALLBACK RESPONSE:\n\n" + fallbackResult);
@@ -129,12 +146,6 @@ analyzePageButton.addEventListener('click', async () => {
         setStatus(`Error: ${err.message}`, true);
     }
 });
-
-// Re-add captureScreenshot listener to `background.js` since it's cleaner
-// In background.js, add:
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//    if(request.action === 'captureScreenshot') { ... } // see below for full code
-// });
 
 dropZone.addEventListener('click', () => fileInput.click());
 ['dragover', 'drop', 'dragenter', 'dragleave'].forEach(eName => dropZone.addEventListener(eName, e => {
@@ -196,22 +207,5 @@ function setStatus(message, isError = false) {
     } else {
         statusBox.innerHTML = message;
     }
-    statusBox.style.color = isError ? '#f87171' : 'var(--text-light)';
+    statusBox.style.color = isError ? '#f87171' : 'var(--text-secondary)';
 }
-
-// Add this to background.js to complete the screenshot functionality
-/*
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    // ... other message listeners
-    if (request.action === 'captureScreenshot') {
-        chrome.tabs.captureVisibleTab({ format: 'png' }, (dataUrl) => {
-            if (chrome.runtime.lastError) {
-                sendResponse({ success: false, message: chrome.runtime.lastError.message });
-            } else {
-                sendResponse({ success: true, dataUrl: dataUrl });
-            }
-        });
-        return true; // Keep channel open for async response
-    }
-});
-*/
